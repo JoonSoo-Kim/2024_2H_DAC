@@ -3,14 +3,16 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { getChartData } from '../utils/getChartData';
 import { EtfContentTypography, EtfTitleTypography } from '../styles/typography';
 import { ToEtfDetailButton } from '../styles/button';
+import { Button, Box } from '@mui/material';
+
+const ITEMS_PER_PAGE = 10; // 한 페이지에 보여줄 아이템 수
 
 const ETFList = ({ searchTerm, priceRange }) => {
     const [etfs, setEtfs] = useState([]); // ETF 목록 상태
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState(null); // 오류 상태
     const [chartData, setChartData] = useState({}); // 차트 데이터 상태
-    priceRange[0] = 0;
-    priceRange[1] = 1000000;
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
 
     useEffect(() => {
         const fetchEtfs = async () => {
@@ -49,9 +51,15 @@ const ETFList = ({ searchTerm, priceRange }) => {
 
     const filteredEtfs = etfs.filter((etf) => {
         const matchesSearchTerm = etf.etfName.toLowerCase().includes(searchTerm.toLowerCase());
+        console.log(searchTerm, matchesSearchTerm);
         const withinPriceRange = etf.etfPrice >= priceRange[0] && etf.etfPrice <= priceRange[1];
         return matchesSearchTerm && withinPriceRange;
     });
+
+    // 페이지네이션 관련
+    const totalPages = Math.ceil(filteredEtfs.length / ITEMS_PER_PAGE); // 총 페이지 수 계산
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE; // 현재 페이지의 시작 인덱스
+    const currentEtfs = filteredEtfs.slice(startIndex, startIndex + ITEMS_PER_PAGE); // 현재 페이지에 해당하는 ETF 목록
 
     if (loading) return <div>로딩 중...</div>; // 로딩 중일 때 표시
     if (error) return <div>오류: {error}</div>; // 오류 발생 시 표시
@@ -59,7 +67,7 @@ const ETFList = ({ searchTerm, priceRange }) => {
     return (
         <div style={{ padding: '16px' }}>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-                {filteredEtfs.map((etf) => (
+                {currentEtfs.map((etf) => (
                     <li
                         key={etf.etfCode}
                         style={{
@@ -108,6 +116,27 @@ const ETFList = ({ searchTerm, priceRange }) => {
                     </li>
                 ))}
             </ul>
+
+            {/* 페이지네이션 버튼 */}
+            <Box display="flex" justifyContent="center" mt={2}>
+                <Button
+                    variant="contained"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                >
+                    이전
+                </Button>
+                <Box mx={1}>
+                    {currentPage} / {totalPages}
+                </Box>
+                <Button
+                    variant="contained"
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                >
+                    다음
+                </Button>
+            </Box>
         </div>
     );
 };

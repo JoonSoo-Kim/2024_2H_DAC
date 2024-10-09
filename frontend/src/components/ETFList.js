@@ -4,6 +4,7 @@ import { getChartData } from '../utils/getChartData';
 import { EtfContentTypography, EtfTitleTypography } from '../styles/typography';
 import { ToEtfDetailButton } from '../styles/button';
 import { Button, Box } from '@mui/material';
+import { getEtfList } from '../utils/getEtfList';
 
 const ITEMS_PER_PAGE = 10; // 한 페이지에 보여줄 아이템 수
 
@@ -18,13 +19,7 @@ const ETFList = ({ searchTerm, priceRange }) => {
         const fetchEtfs = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/etf');
-                if (!response.ok) {
-                    console.log(await response.json());
-                    throw new Error('네트워크 응답이 정상적이지 않습니다.');
-                }
-                const data = await response.json();
-                setEtfs(data); // 데이터 저장
+                setEtfs(await getEtfList()); // 데이터 저장
 
                 // 각 ETF에 대한 차트 데이터 요청
                 const chartDataPromises = data.map(async (etf) => {
@@ -38,6 +33,7 @@ const ETFList = ({ searchTerm, priceRange }) => {
                     acc[item.code] = item.data;
                     return acc;
                 }, {});
+
                 setChartData(chartDataObject); // 차트 데이터 저장
             } catch (error) {
                 setError(error.message); // 오류 메시지 저장
@@ -49,6 +45,7 @@ const ETFList = ({ searchTerm, priceRange }) => {
         fetchEtfs();
     }, []);
 
+    // 조건에 맞는 ETF만 필터링
     const filteredEtfs = etfs.filter((etf) => {
         const matchesSearchTerm = etf.etfName.toLowerCase().includes(searchTerm.toLowerCase());
         console.log(searchTerm, matchesSearchTerm);
@@ -56,7 +53,7 @@ const ETFList = ({ searchTerm, priceRange }) => {
         return matchesSearchTerm && withinPriceRange;
     });
 
-    // 페이지네이션 관련
+    // 페이지네이션
     const totalPages = Math.ceil(filteredEtfs.length / ITEMS_PER_PAGE); // 총 페이지 수 계산
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE; // 현재 페이지의 시작 인덱스
     const currentEtfs = filteredEtfs.slice(startIndex, startIndex + ITEMS_PER_PAGE); // 현재 페이지에 해당하는 ETF 목록
@@ -116,8 +113,6 @@ const ETFList = ({ searchTerm, priceRange }) => {
                     </li>
                 ))}
             </ul>
-
-            {/* 페이지네이션 버튼 */}
             <Box display="flex" justifyContent="center" mt={2}>
                 <Button
                     variant="contained"

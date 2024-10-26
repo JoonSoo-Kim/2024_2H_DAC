@@ -146,26 +146,31 @@ const ETFDetailPage = () => {
                     <Logo />
                 </Toolbar>
             </AppBar>
-            <ETFDetailChart
-                data={filteredData.length > 0 ? filteredData : combinedData}
-                showVixm={showVixm}
-                showAaxj={showAaxj}
-                showAverage={showAverage}
-            />
-            <ETFDetailPeriodButton
-                filterDuration={filterDuration}
-                setFilterDuration={setFilterDuration}
-                filterData={filterData}
-            />
-            <ETFDetailUnitButton
-                aggregation={aggregation}
-                setAggregation={setAggregation}
-                filteredData={filteredData}
-                combinedData={combinedData}
-                aggregateMonthly={aggregateMonthly}
-                aggregateYearly={aggregateYearly}
-                setFilteredData={setFilteredData}
-            />
+            <Grid container style={{ height: '100vh' }}>
+                <ETFDetailChart
+                    data={filteredData.length > 0 ? filteredData : combinedData}
+                    showVixm={showVixm}
+                    showAaxj={showAaxj}
+                    showAverage={showAverage}
+                    setShowVixm={setShowVixm}
+                    setShowAaxj={setShowAaxj}
+                    setShowAverage={setShowAverage}
+                />
+                <ETFDetailPeriodButton
+                    filterDuration={filterDuration}
+                    setFilterDuration={setFilterDuration}
+                    filterData={filterData}
+                />
+                <ETFDetailUnitButton
+                    aggregation={aggregation}
+                    setAggregation={setAggregation}
+                    filteredData={filteredData}
+                    combinedData={combinedData}
+                    aggregateMonthly={aggregateMonthly}
+                    aggregateYearly={aggregateYearly}
+                    setFilteredData={setFilteredData}
+                />
+            </Grid>
         </div>
     );
 };

@@ -138,34 +138,32 @@ const ETFDetailTop = () => {
     };
 
     return (
-        <div>
-            <Grid container style={{ height: '100vh' }}>
-                <ETFDetailChart
-                    data={filteredData.length > 0 ? filteredData : combinedData}
-                    showVixm={showVixm}
-                    showAaxj={showAaxj}
-                    showAverage={showAverage}
-                    setShowVixm={setShowVixm}
-                    setShowAaxj={setShowAaxj}
-                    setShowAverage={setShowAverage}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <ETFDetailChart
+                data={filteredData.length > 0 ? filteredData : combinedData}
+                showVixm={showVixm}
+                showAaxj={showAaxj}
+                showAverage={showAverage}
+                setShowVixm={setShowVixm}
+                setShowAaxj={setShowAaxj}
+                setShowAverage={setShowAverage}
+            />
+            <div>
+                <ETFDetailPeriodButton
+                    filterDuration={filterDuration}
+                    setFilterDuration={setFilterDuration}
+                    filterData={filterData}
                 />
-                <div>
-                    <ETFDetailPeriodButton
-                        filterDuration={filterDuration}
-                        setFilterDuration={setFilterDuration}
-                        filterData={filterData}
-                    />
-                    <ETFDetailUnitButton
-                        aggregation={aggregation}
-                        setAggregation={setAggregation}
-                        filteredData={filteredData}
-                        combinedData={combinedData}
-                        aggregateMonthly={aggregateMonthly}
-                        aggregateYearly={aggregateYearly}
-                        setFilteredData={setFilteredData}
-                    />
-                </div>
-            </Grid>
+                <ETFDetailUnitButton
+                    aggregation={aggregation}
+                    setAggregation={setAggregation}
+                    filteredData={filteredData}
+                    combinedData={combinedData}
+                    aggregateMonthly={aggregateMonthly}
+                    aggregateYearly={aggregateYearly}
+                    setFilteredData={setFilteredData}
+                />
+            </div>
         </div>
     );
 };

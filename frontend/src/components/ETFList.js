@@ -19,7 +19,9 @@ const ETFList = ({ searchTerm, priceRange }) => {
         const fetchEtfs = async () => {
             try {
                 setLoading(true);
-                setEtfs(await getEtfList()); // 데이터 저장
+
+                const data = await getEtfList();
+                setEtfs(data); // 데이터 저장
 
                 // 각 ETF에 대한 차트 데이터 요청
                 const chartDataPromises = data.map(async (etf) => {

@@ -33,12 +33,27 @@ const SurveyPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // 제출 처리 로직 추가 예정
-        console.log(responses);
+
+        // 유효성 검사
+        const isValid = Object.values(responses).every((response) => response !== '');
+        if (!isValid) {
+            alert('모든 질문에 답변해 주세요.');
+            return; // 서버 요청을 하지 않고 반환
+        }
+
+        // 여기에 제출 처리 로직 추가
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '20px',
+            }}
+        >
             <Typography variant="h4" gutterBottom>
                 나의 성향 설문조사
             </Typography>
@@ -47,7 +62,9 @@ const SurveyPage = () => {
                     {/* 질문 1 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>위험을 감수하면서 높은 수익을 추구하는 것이 중요하다고 생각하십니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                위험을 감수하면서 높은 수익을 추구하는 것이 중요하다고 생각하십니까?
+                            </FormLabel>
                             <RadioGroup name="riskTaking" value={responses.riskTaking} onChange={handleChange}>
                                 <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
                                 <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
@@ -71,7 +88,9 @@ const SurveyPage = () => {
                     {/* 질문 2 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>투자를 하는 것이 당신에게 스트레스나 불안을 유발합니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                투자를 하는 것이 당신에게 스트레스나 불안을 유발합니까?
+                            </FormLabel>
                             <RadioGroup name="stress" value={responses.stress} onChange={handleChange}>
                                 <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
                                 <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
@@ -95,7 +114,9 @@ const SurveyPage = () => {
                     {/* 질문 3 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>당신의 자산이 장기적으로 성장하는 것을 목표로 투자하십니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                당신의 자산이 장기적으로 성장하는 것을 목표로 투자하십니까?
+                            </FormLabel>
                             <RadioGroup name="longTermGrowth" value={responses.longTermGrowth} onChange={handleChange}>
                                 <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
                                 <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
@@ -119,7 +140,7 @@ const SurveyPage = () => {
                     {/* 질문 4 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
                                 시장이 급격하게 변동할 때, 스스로의 투자 결정을 쉽게 바꿀 수 있습니까?
                             </FormLabel>
                             <RadioGroup name="decisionChange" value={responses.decisionChange} onChange={handleChange}>
@@ -145,7 +166,9 @@ const SurveyPage = () => {
                     {/* 질문 5 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>투자한 상품에 손실이 발생했을 때, 즉각적으로 매도하는 편입니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                투자한 상품에 손실이 발생했을 때, 즉각적으로 매도하는 편입니까?
+                            </FormLabel>
                             <RadioGroup name="immediateSell" value={responses.immediateSell} onChange={handleChange}>
                                 <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
                                 <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
@@ -169,7 +192,9 @@ const SurveyPage = () => {
                     {/* 질문 6 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>투자 계획을 세우고 나서, 이를 철저하게 따르는 편입니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                투자 계획을 세우고 나서, 이를 철저하게 따르는 편입니까?
+                            </FormLabel>
                             <RadioGroup name="followPlan" value={responses.followPlan} onChange={handleChange}>
                                 <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
                                 <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
@@ -193,7 +218,9 @@ const SurveyPage = () => {
                     {/* 질문 7 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>현재 혹은 미래의 ETF 투자 비율이 전체 자산에서 어느 정도입니까?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                현재 혹은 미래의 ETF 투자 비율이 전체 자산에서 어느 정도입니까?
+                            </FormLabel>
                             <RadioGroup name="etfInvestment" value={responses.etfInvestment} onChange={handleChange}>
                                 <FormControlLabel value="0-20%" control={<Radio />} label="0~20% 투자" />
                                 <FormControlLabel value="21-50%" control={<Radio />} label="21~50% 투자" />
@@ -215,7 +242,9 @@ const SurveyPage = () => {
                     {/* 질문 8 */}
                     <Grid item xs={12}>
                         <FormControl>
-                            <FormLabel>투자에 대한 자신만의 생각이나 철학이 있으신가요?</FormLabel>
+                            <FormLabel style={{ fontSize: '1.5rem' }}>
+                                투자에 대한 자신만의 생각이나 철학이 있으신가요?
+                            </FormLabel>
                             <TextField
                                 label="투자에 대한 자신만의 생각이나 철학을 설명해주세요."
                                 name="philosophyReason"

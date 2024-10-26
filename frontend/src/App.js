@@ -5,6 +5,7 @@ import SignUpPage from './pages/SignUpPage';
 import PortfolioPage from './pages/PortfolioPage';
 import ETFListPage from './pages/ETFListPage';
 import ETFDetailPage from './pages/ETFDetailPage';
+import SurveyPage from './pages/SurveyPage';
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/etf" element={<ETFListPage />} />
                 <Route path="/etf/detail" element={<ETFDetailPage />} />
+                <Route path="/survey" element={<SurveyPage />} />
             </Routes>
         </Router>
     );

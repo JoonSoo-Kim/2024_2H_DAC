@@ -1,4 +1,4 @@
-const DETAIL_INFO_URL = `${process.env.REACT_APP_BACKEND_URL}/etf?etfCode=`;
+const DETAIL_INFO_URL = `${process.env.REACT_APP_BACKEND_URL}/etf/`;
 
 const getETFDetailInfo = async (etfCode) => {
     try {

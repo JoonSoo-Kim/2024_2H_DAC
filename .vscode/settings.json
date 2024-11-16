@@ -1,0 +1,11 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "d:/Programming/2024_2H_DAC/backend/target/dependency/*.jar",
+        "d:/Programming/2024_2H_DAC/backend/lib/lombok.jar"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.annotateGenerated": "true",
+    "java.configuration.enableAnnotationProcessing": true // Lombok 애노테이션 프로세서 활성화
+}

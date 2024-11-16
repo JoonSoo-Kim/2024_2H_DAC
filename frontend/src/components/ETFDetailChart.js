@@ -3,24 +3,24 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Button from '@mui/material/Button';
 
-const ETFDetailChart = ({ data, showVixm, showAaxj, showAverage, setShowVixm, setShowAaxj, setShowAverage }) => {
+const ETFDetailChart = ({ data, showFirst, showSecond, showAverage, setShowFirst, setShowSecond, setShowAverage }) => {
     return (
         <div>
             <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'row' }}>
                 <Button
-                    variant={showVixm ? 'contained' : 'outlined'}
+                    variant={showFirst ? 'contained' : 'outlined'}
                     color="primary"
-                    onClick={() => setShowVixm(!showVixm)}
+                    onClick={() => setShowFirst(!showFirst)}
                 >
-                    {showVixm ? 'Hide VIXM' : 'Show VIXM'}
+                    {showFirst ? 'Hide First' : 'Show First'}
                 </Button>
                 <Button
-                    variant={showAaxj ? 'contained' : 'outlined'}
+                    variant={showSecond ? 'contained' : 'outlined'}
                     color="primary"
-                    onClick={() => setShowAaxj(!showAaxj)}
+                    onClick={() => setShowSecond(!showSecond)}
                     style={{ marginLeft: '10px' }}
                 >
-                    {showAaxj ? 'Hide AAXJ' : 'Show AAXJ'}
+                    {showSecond ? 'Hide Second' : 'Show Second'}
                 </Button>
                 <Button
                     variant={showAverage ? 'contained' : 'outlined'}
@@ -39,10 +39,12 @@ const ETFDetailChart = ({ data, showVixm, showAaxj, showAverage, setShowVixm, se
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    {showVixm && <Line type="monotone" dataKey="vixmPrice" stroke="red" dot={false} name="VIXM" />}
-                    {showAaxj && <Line type="monotone" dataKey="aaxjPrice" stroke="blue" dot={false} name="AAXJ" />}
+                    {showFirst && <Line type="monotone" dataKey="firstPrice" stroke="red" dot={false} name="First" />}
+                    {showSecond && (
+                        <Line type="monotone" dataKey="secondPrice" stroke="blue" dot={false} name="Second" />
+                    )}
                     {showAverage && (
-                        <Line type="monotone" dataKey="averagePrice" stroke="#9370DB" dot={false} name="헷지 예상값" />
+                        <Line type="monotone" dataKey="averagePrice" stroke="#9370DB" dot={false} name="Average" />
                     )}
                 </LineChart>
             </ResponsiveContainer>

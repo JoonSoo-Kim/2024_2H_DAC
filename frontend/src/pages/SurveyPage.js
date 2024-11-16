@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Typography,
     TextField,
@@ -10,18 +10,48 @@ import {
     FormControlLabel,
     Radio,
 } from '@mui/material';
+import { createTendency } from '../utils/createTendency';
+import { getTendency } from '../utils/getTendency';
 
 const SurveyPage = () => {
     const [responses, setResponses] = useState({
         riskTaking: '',
-        stress: '',
-        longTermGrowth: '',
-        decisionChange: '',
-        immediateSell: '',
-        followPlan: '',
-        etfInvestment: '',
-        philosophy: '',
+        riskTakingReason: '',
+        quickDecision: '',
+        quickDecisionReason: '',
+        highRiskPreference: '',
+        highRiskPreferenceReason: '',
+        marketVolatility: '',
+        marketVolatilityReason: '',
+        stressImpact: '',
+        stressImpactReason: '',
+        highRiskAttraction: '',
+        highRiskAttractionReason: '',
     });
+
+    useEffect(() => {
+        const fetchTendency = async () => {
+            const data = await getTendency();
+            if (data) {
+                setResponses({
+                    riskTaking: data.answer1.toString(),
+                    riskTakingReason: data.reason1,
+                    quickDecision: data.answer2.toString(),
+                    quickDecisionReason: data.reason2,
+                    highRiskPreference: data.answer3.toString(),
+                    highRiskPreferenceReason: data.reason3,
+                    marketVolatility: data.answer4.toString(),
+                    marketVolatilityReason: data.reason4,
+                    stressImpact: data.answer5.toString(),
+                    stressImpactReason: data.reason5,
+                    highRiskAttraction: data.answer6.toString(),
+                    highRiskAttractionReason: data.reason6,
+                });
+            }
+        };
+
+        fetchTendency();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,7 +61,7 @@ const SurveyPage = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // 유효성 검사
@@ -41,7 +71,31 @@ const SurveyPage = () => {
             return; // 서버 요청을 하지 않고 반환
         }
 
-        // 여기에 제출 처리 로직 추가
+        const answers = [
+            responses.riskTaking,
+            responses.quickDecision,
+            responses.highRiskPreference,
+            responses.marketVolatility,
+            responses.stressImpact,
+            responses.highRiskAttraction,
+        ];
+
+        const reasons = [
+            responses.riskTakingReason,
+            responses.quickDecisionReason,
+            responses.highRiskPreferenceReason,
+            responses.marketVolatilityReason,
+            responses.stressImpactReason,
+            responses.highRiskAttractionReason,
+        ];
+
+        try {
+            await createTendency(answers, reasons);
+            window.location.href = '/'; // 메인 페이지로 이동
+        } catch (error) {
+            console.error('설문조사 제출 중 에러 발생:', error);
+            alert('설문조사 제출 중 에러가 발생했습니다.');
+        }
     };
 
     return (
@@ -63,14 +117,15 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                위험을 감수하면서 높은 수익을 추구하는 것이 중요하다고 생각하십니까?
+                                당신은 높은 수익을 위해 큰 위험을 감수할 준비가 되어 있습니까? (-100: 전혀 그렇지 않다,
+                                -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
                             <RadioGroup name="riskTaking" value={responses.riskTaking} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
                                 label="그 이유를 자세히 설명해주세요"
@@ -89,21 +144,22 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                투자를 하는 것이 당신에게 스트레스나 불안을 유발합니까?
+                                새로운 투자 기회를 발견했을 때, 빠르게 투자 결정을 내리십니까? (-100: 전혀 그렇지 않다,
+                                -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
-                            <RadioGroup name="stress" value={responses.stress} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                            <RadioGroup name="quickDecision" value={responses.quickDecision} onChange={handleChange}>
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
                                 label="그 이유를 자세히 설명해주세요"
-                                name="stressReason"
+                                name="quickDecisionReason"
                                 multiline
                                 rows={4}
-                                value={responses.stressReason}
+                                value={responses.quickDecisionReason}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth
@@ -115,21 +171,26 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                당신의 자산이 장기적으로 성장하는 것을 목표로 투자하십니까?
+                                당신은 주식이나 ETF 같은 고위험 상품에 투자하는 것을 선호합니까? (-100: 전혀 그렇지
+                                않다, -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
-                            <RadioGroup name="longTermGrowth" value={responses.longTermGrowth} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                            <RadioGroup
+                                name="highRiskPreference"
+                                value={responses.highRiskPreference}
+                                onChange={handleChange}
+                            >
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
-                                label="장기 투자에 대한 경험이나 생각을 공유해주세요"
-                                name="longTermGrowthExperience"
+                                label="그 이유를 자세히 설명해주세요"
+                                name="highRiskPreferenceReason"
                                 multiline
                                 rows={4}
-                                value={responses.longTermGrowthExperience}
+                                value={responses.highRiskPreferenceReason}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth
@@ -141,21 +202,26 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                시장이 급격하게 변동할 때, 스스로의 투자 결정을 쉽게 바꿀 수 있습니까?
+                                시장의 변동성에 크게 흔들리지 않고 투자를 지속할 수 있습니까? (-100: 전혀 그렇지 않다,
+                                -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
-                            <RadioGroup name="decisionChange" value={responses.decisionChange} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                            <RadioGroup
+                                name="marketVolatility"
+                                value={responses.marketVolatility}
+                                onChange={handleChange}
+                            >
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
-                                label="만약 그렇다면, 어떤 기준으로 결정을 내리시는지 말씀해주세요."
-                                name="decisionChangeReason"
+                                label="만약 그렇다면, 어떤 기준을 갖고 결정을 내리시는지 공유해주세요."
+                                name="marketVolatilityReason"
                                 multiline
                                 rows={4}
-                                value={responses.decisionChangeReason}
+                                value={responses.marketVolatilityReason}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth
@@ -167,21 +233,22 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                투자한 상품에 손실이 발생했을 때, 즉각적으로 매도하는 편입니까?
+                                투자 활동에서 오는 스트레스나 불안 같은 감정에 영향을 받지 않으십니까? (-100: 전혀
+                                그렇지 않다, -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
-                            <RadioGroup name="immediateSell" value={responses.immediateSell} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                            <RadioGroup name="stressImpact" value={responses.stressImpact} onChange={handleChange}>
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
                                 label="손실 발생 시 어떤 감정이 드는지 설명해주세요."
-                                name="immediateSellReason"
+                                name="stressImpactReason"
                                 multiline
                                 rows={4}
-                                value={responses.immediateSellReason}
+                                value={responses.stressImpactReason}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth
@@ -193,64 +260,26 @@ const SurveyPage = () => {
                     <Grid item xs={12}>
                         <FormControl>
                             <FormLabel style={{ fontSize: '1.5rem' }}>
-                                투자 계획을 세우고 나서, 이를 철저하게 따르는 편입니까?
+                                리스크가 적은 안전한 투자보다는 고위험 고수익 투자에 더 매력을 느끼십니까? (-100: 전혀
+                                그렇지 않다, -50: 약간 그렇지 않다, 0: 중립적, 50: 약간 그렇다, 100: 매우 그렇다)
                             </FormLabel>
-                            <RadioGroup name="followPlan" value={responses.followPlan} onChange={handleChange}>
-                                <FormControlLabel value="1" control={<Radio />} label="1 전혀 아니다" />
-                                <FormControlLabel value="2" control={<Radio />} label="2 약간 아니다" />
-                                <FormControlLabel value="3" control={<Radio />} label="3 보통이다" />
-                                <FormControlLabel value="4" control={<Radio />} label="4 약간 그렇다" />
-                                <FormControlLabel value="5" control={<Radio />} label="5 매우 그렇다" />
+                            <RadioGroup
+                                name="highRiskAttraction"
+                                value={responses.highRiskAttraction}
+                                onChange={handleChange}
+                            >
+                                <FormControlLabel value="-100" control={<Radio />} label="-100 전혀 그렇지 않다" />
+                                <FormControlLabel value="-50" control={<Radio />} label="-50 약간 그렇지 않다" />
+                                <FormControlLabel value="0" control={<Radio />} label="0 중립적" />
+                                <FormControlLabel value="50" control={<Radio />} label="50 약간 그렇다" />
+                                <FormControlLabel value="100" control={<Radio />} label="100 매우 그렇다" />
                             </RadioGroup>
                             <TextField
-                                label="그 이유를 자세히 설명해주세요."
-                                name="followPlanReason"
+                                label="그 이유를 자세히 설명해주세요"
+                                name="highRiskAttractionReason"
                                 multiline
                                 rows={4}
-                                value={responses.followPlanReason}
-                                onChange={handleChange}
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </FormControl>
-                    </Grid>
-
-                    {/* 질문 7 */}
-                    <Grid item xs={12}>
-                        <FormControl>
-                            <FormLabel style={{ fontSize: '1.5rem' }}>
-                                현재 혹은 미래의 ETF 투자 비율이 전체 자산에서 어느 정도입니까?
-                            </FormLabel>
-                            <RadioGroup name="etfInvestment" value={responses.etfInvestment} onChange={handleChange}>
-                                <FormControlLabel value="0-20%" control={<Radio />} label="0~20% 투자" />
-                                <FormControlLabel value="21-50%" control={<Radio />} label="21~50% 투자" />
-                                <FormControlLabel value="51-100%" control={<Radio />} label="51~100% 투자" />
-                            </RadioGroup>
-                            <TextField
-                                label="ETF 외에 남은 자산은 어떻게 투자하고 있는지 설명해주세요."
-                                name="etfInvestmentReason"
-                                multiline
-                                rows={4}
-                                value={responses.etfInvestmentReason}
-                                onChange={handleChange}
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </FormControl>
-                    </Grid>
-
-                    {/* 질문 8 */}
-                    <Grid item xs={12}>
-                        <FormControl>
-                            <FormLabel style={{ fontSize: '1.5rem' }}>
-                                투자에 대한 자신만의 생각이나 철학이 있으신가요?
-                            </FormLabel>
-                            <TextField
-                                label="투자에 대한 자신만의 생각이나 철학을 설명해주세요."
-                                name="philosophyReason"
-                                multiline
-                                rows={4}
-                                value={responses.philosophyReason}
+                                value={responses.highRiskAttractionReason}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth

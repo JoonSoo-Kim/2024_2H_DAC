@@ -3,50 +3,20 @@ import { Grid } from '@mui/material';
 import ETFDetailChart from './ETFDetailChart';
 import ETFDetailPeriodButton from './ETFDetailPeriodButton';
 import ETFDetailUnitButton from './ETFDetailUnitButton';
-import { getETFDetailCsv } from '../utils/getETFDetailCsv';
+import getETFPrice from '../utils/getETFPrice';
 
-const ETFDetailTop = () => {
-    const [vixmData, setVixmData] = useState([]);
-    const [aaxjData, setAaxjData] = useState([]);
+const ETFDetailTop = ({ etfCode, selectedRecommendation }) => {
+    const [firstData, setFirstData] = useState([]);
+    const [secondData, setSecondData] = useState([]);
     const [averageData, setAverageData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
 
-    const [showVixm, setShowVixm] = useState(true);
-    const [showAaxj, setShowAaxj] = useState(true);
+    const [showFirst, setShowFirst] = useState(true);
+    const [showSecond, setShowSecond] = useState(true);
     const [showAverage, setShowAverage] = useState(true);
 
     const [filterDuration, setFilterDuration] = useState('3년');
     const [aggregation, setAggregation] = useState('daily');
-
-    useEffect(() => {
-        getETFDetailCsv('/VIXM.csv').then(setVixmData).catch(console.error);
-        getETFDetailCsv('/AAXJ.csv').then(setAaxjData).catch(console.error);
-    }, []);
-
-    useEffect(() => {
-        if (vixmData.length > 0 && aaxjData.length > 0) {
-            calculateAverage(vixmData, aaxjData);
-            filterData(filterDuration);
-        }
-    }, [vixmData, aaxjData, filterDuration]);
-
-    const calculateAverage = (data1, data2) => {
-        const combinedData = data1.map((item, index) => {
-            const price2 = index < data2.length ? data2[index].price : 0;
-            return {
-                date: item.date,
-                averagePrice: (item.price + price2) / 2,
-            };
-        });
-        setAverageData(combinedData);
-    };
-
-    const combinedData = vixmData.map((item, index) => ({
-        date: item.date,
-        vixmPrice: item.price,
-        aaxjPrice: aaxjData[index] ? aaxjData[index].price : 0,
-        averagePrice: averageData[index] ? averageData[index].averagePrice : 0,
-    }));
 
     const filterData = (duration) => {
         const now = new Date();
@@ -77,6 +47,64 @@ const ETFDetailTop = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchFirstData = async () => {
+            try {
+                const data = await getETFPrice(etfCode);
+                setFirstData(data);
+            } catch (error) {
+                console.error('Failed to fetch first data:', error);
+            }
+        };
+
+        fetchFirstData();
+    }, [etfCode]);
+
+    useEffect(() => {
+        const fetchSecondData = async () => {
+            if (selectedRecommendation) {
+                try {
+                    const data = await getETFPrice(selectedRecommendation);
+                    setSecondData(data);
+                } catch (error) {
+                    console.error('Failed to fetch second data:', error);
+                }
+            }
+        };
+
+        fetchSecondData();
+    }, [selectedRecommendation]);
+
+    useEffect(() => {
+        if (firstData.length > 0 && secondData.length > 0) {
+            calculateAverage(firstData, secondData);
+        }
+    }, [firstData, secondData]);
+
+    useEffect(() => {
+        if (averageData.length > 0) {
+            filterData(filterDuration);
+        }
+    }, [averageData, filterDuration]);
+
+    const calculateAverage = (data1, data2) => {
+        const combinedData = data1.map((item, index) => {
+            const price2 = index < data2.length ? data2[index].price : 0;
+            return {
+                date: item.date,
+                averagePrice: (Number(item.price) + Number(price2)) / 2,
+            };
+        });
+        setAverageData(combinedData);
+    };
+
+    const combinedData = firstData.map((item, index) => ({
+        date: item.date,
+        firstPrice: item.price,
+        secondPrice: secondData[index] ? secondData[index].price : 0,
+        averagePrice: averageData[index] ? averageData[index].averagePrice : 0,
+    }));
+
     const aggregateMonthly = (data) => {
         const monthlyData = data.reduce((acc, item) => {
             const date = new Date(item.date);
@@ -84,14 +112,14 @@ const ETFDetailTop = () => {
             if (!acc[monthYear]) {
                 acc[monthYear] = {
                     date: monthYear,
-                    vixmPrice: 0,
-                    aaxjPrice: 0,
+                    firstPrice: 0,
+                    secondPrice: 0,
                     averagePrice: 0,
                     count: 0,
                 };
             }
-            acc[monthYear].vixmPrice += item.vixmPrice;
-            acc[monthYear].aaxjPrice += item.aaxjPrice;
+            acc[monthYear].firstPrice += item.firstPrice;
+            acc[monthYear].secondPrice += item.secondPrice;
             acc[monthYear].averagePrice += item.averagePrice;
             acc[monthYear].count += 1;
             return acc;
@@ -99,8 +127,8 @@ const ETFDetailTop = () => {
 
         const result = Object.values(monthlyData).map((item) => ({
             date: item.date,
-            vixmPrice: item.vixmPrice / item.count,
-            aaxjPrice: item.aaxjPrice / item.count,
+            firstPrice: item.firstPrice / item.count,
+            secondPrice: item.secondPrice / item.count,
             averagePrice: item.averagePrice / item.count,
         }));
 
@@ -114,14 +142,14 @@ const ETFDetailTop = () => {
             if (!acc[year]) {
                 acc[year] = {
                     date: year,
-                    vixmPrice: 0,
-                    aaxjPrice: 0,
+                    firstPrice: 0,
+                    secondPrice: 0,
                     averagePrice: 0,
                     count: 0,
                 };
             }
-            acc[year].vixmPrice += item.vixmPrice;
-            acc[year].aaxjPrice += item.aaxjPrice;
+            acc[year].firstPrice += item.firstPrice;
+            acc[year].secondPrice += item.secondPrice;
             acc[year].averagePrice += item.averagePrice;
             acc[year].count += 1;
             return acc;
@@ -129,8 +157,8 @@ const ETFDetailTop = () => {
 
         const result = Object.values(yearlyData).map((item) => ({
             date: item.date,
-            vixmPrice: item.vixmPrice / item.count,
-            aaxjPrice: item.aaxjPrice / item.count,
+            firstPrice: item.firstPrice / item.count,
+            secondPrice: item.secondPrice / item.count,
             averagePrice: item.averagePrice / item.count,
         }));
 
@@ -141,11 +169,11 @@ const ETFDetailTop = () => {
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <ETFDetailChart
                 data={filteredData.length > 0 ? filteredData : combinedData}
-                showVixm={showVixm}
-                showAaxj={showAaxj}
+                showFirst={showFirst}
+                showSecond={showSecond}
                 showAverage={showAverage}
-                setShowVixm={setShowVixm}
-                setShowAaxj={setShowAaxj}
+                setShowFirst={setShowFirst}
+                setShowSecond={setShowSecond}
                 setShowAverage={setShowAverage}
             />
             <div>

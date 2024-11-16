@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Grid, Paper, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../utils/LoginUser';
+import { loginUser } from '../utils/loginUser';
 import { SystemTypography } from '../styles/typography';
+import { getEtfList } from '../utils/getEtfList';
 
 const Signin = () => {
     const [id, setId] = useState('');
@@ -14,22 +15,30 @@ const Signin = () => {
 
         try {
             const response = await loginUser(id, password);
-            const responseJson = await response.json();
-            console.log(responseJson);
-            if (response.status === 201) {
-                document.cookie = `userId=${responseJson.userId}; path=/;`;
-                alert('로그인 성공!');
-            } else if (response.status === 401) {
-                alert('올바르지 않은 비밀번호입니다.');
-            } else if (response.status === 404) {
-                alert('존재하지 않는 아이디입니다.');
-            } else if (response.status === 409) {
-                alert('이미 로그인 중입니다.');
+            if (!response.ok) {
+                // 응답 상태 코드에 따라 다른 메시지 표시
+                if (response.status === 401) {
+                    alert('올바르지 않은 비밀번호입니다.');
+                } else if (response.status === 404) {
+                    alert('존재하지 않는 아이디입니다.');
+                } else if (response.status === 409) {
+                    alert('이미 로그인 중입니다.');
+                } else {
+                    alert('서버와의 통신 중 오류가 발생했습니다.');
+                }
             } else {
-                alert('로그인 실패!');
+                const responseJson = await response.json();
+                document.cookie = `userId=${responseJson.userId}; path=/;`;
+
+                const etfListResponse = await getEtfList();
+                const etfList = etfListResponse.data;
+                localStorage.setItem('etfList', JSON.stringify(etfList)); // 로컬 스토리지에 저장
+                alert('로그인 성공!');
+                window.location.reload(); // 현재 위치가 '/'라면 새로고침
             }
         } catch (error) {
-            alert('서버와의 통신 중 오류가 발생했습니다.');
+            console.error('로그인 중 에러 발생:', error);
+            alert('로그인 실패!');
         }
     };
 

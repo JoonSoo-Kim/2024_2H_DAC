@@ -1,0 +1,128 @@
+package dsp.backend.controller;
+
+import dsp.backend.service.PortfolioService;
+import dsp.backend.service.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/portfolio")
+public class PortfolioController {
+
+    @Autowired
+    private PortfolioService portfolioService;
+
+    @PostMapping
+    public ResponseEntity<String> addPortfolio(@RequestBody PortfolioRequest request) {
+        try {
+            portfolioService.addPortfolio(request.getUserId(), request.getEtfCode(), request.getCount());
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("존재하지 않는 정보");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deletePortfolio(@RequestBody PortfolioRequest request) {
+        try {
+            portfolioService.deletePortfolio(request.getUserId(), request.getEtfCode());
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("존재하지 않는 정보");
+        }
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<PortfolioResponse>> getPortfolios(@PathVariable String userId) {
+        try {
+            List<PortfolioResponse> portfolios = portfolioService.getPortfolios(userId);
+            return ResponseEntity.ok(portfolios);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    public static class PortfolioRequest {
+        private String userId;
+        private String etfCode;
+        private Integer count;
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getEtfCode() {
+            return etfCode;
+        }
+
+        public void setEtfCode(String etfCode) {
+            this.etfCode = etfCode;
+        }
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+    }
+
+    public static class PortfolioResponse {
+        private String etfCode;
+        private String etfName;
+        private Integer count;
+        private Double money;
+        private Double percent;
+
+        // Getters and setters
+        public String getEtfCode() {
+            return etfCode;
+        }
+
+        public void setEtfCode(String etfCode) {
+            this.etfCode = etfCode;
+        }
+
+        public String getEtfName() {
+            return etfName;
+        }
+
+        public void setEtfName(String etfName) {
+            this.etfName = etfName;
+        }
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+
+        public Double getMoney() {
+            return money;
+        }
+
+        public void setMoney(Double money) {
+            this.money = money;
+        }
+
+        public Double getPercent() {
+            return percent;
+        }
+
+        public void setPercent(Double percent) {
+            this.percent = percent;
+        }
+    }
+}

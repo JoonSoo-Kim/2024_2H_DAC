@@ -1,139 +1,128 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { getChartData } from '../utils/getChartData';
 import { EtfContentTypography, EtfTitleTypography } from '../styles/typography';
 import { ToEtfDetailButton } from '../styles/button';
-import { Button, Box } from '@mui/material';
-import { getEtfList } from '../utils/getEtfList';
+import { Button, Box, CircularProgress, Typography } from '@mui/material';
+import get10ETFInfo from '../utils/get10ETFInfo';
+import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 10; // 한 페이지에 보여줄 아이템 수
 
-const ETFList = ({ searchTerm, priceRange }) => {
-    const [etfs, setEtfs] = useState([]); // ETF 목록 상태
-    const [loading, setLoading] = useState(true); // 로딩 상태
-    const [error, setError] = useState(null); // 오류 상태
-    const [chartData, setChartData] = useState({}); // 차트 데이터 상태
+const ETFList = ({ filteredEtfData }) => {
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
+    const [currentEtfs, setCurrentEtfs] = useState([]); // 현재 페이지에 해당하는 ETF 목록
+    const [loading, setLoading] = useState(false); // 로딩 상태
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchEtfs = async () => {
-            try {
-                setLoading(true);
-
-                const data = await getEtfList();
-                setEtfs(data); // 데이터 저장
-
-                // 각 ETF에 대한 차트 데이터 요청
-                const chartDataPromises = data.map(async (etf) => {
-                    const prices = await getChartData(etf.etfCode);
-                    return { code: etf.etfCode, data: prices };
-                });
-
-                // 모든 차트 데이터 가져오기
-                const chartDataArray = await Promise.all(chartDataPromises);
-                const chartDataObject = chartDataArray.reduce((acc, item) => {
-                    acc[item.code] = item.data;
-                    return acc;
-                }, {});
-
-                setChartData(chartDataObject); // 차트 데이터 저장
-            } catch (error) {
-                setError(error.message); // 오류 메시지 저장
-            } finally {
-                setLoading(false); // 로딩 상태 종료
-            }
+        const fetchEtfInfo = async () => {
+            setLoading(true);
+            const sortedEtfs = filteredEtfData.sort((a, b) => a.longName.localeCompare(b.longName));
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const paginatedEtfs = sortedEtfs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+            const etfSymbols = paginatedEtfs.map((etf) => etf.symbol);
+            const etfInfo = await get10ETFInfo(etfSymbols);
+            setCurrentEtfs(etfInfo);
+            setLoading(false);
         };
 
-        fetchEtfs();
-    }, []);
+        fetchEtfInfo();
+    }, [filteredEtfData, currentPage]);
 
-    // 조건에 맞는 ETF만 필터링
-    const filteredEtfs = etfs.filter((etf) => {
-        const matchesSearchTerm = etf.etfName.toLowerCase().includes(searchTerm.toLowerCase());
-        console.log(searchTerm, matchesSearchTerm);
-        const withinPriceRange = etf.etfPrice >= priceRange[0] && etf.etfPrice <= priceRange[1];
-        return matchesSearchTerm && withinPriceRange;
-    });
-
-    // 페이지네이션
-    const totalPages = Math.ceil(filteredEtfs.length / ITEMS_PER_PAGE); // 총 페이지 수 계산
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE; // 현재 페이지의 시작 인덱스
-    const currentEtfs = filteredEtfs.slice(startIndex, startIndex + ITEMS_PER_PAGE); // 현재 페이지에 해당하는 ETF 목록
-
-    if (loading) return <div>로딩 중...</div>; // 로딩 중일 때 표시
-    if (error) return <div>오류: {error}</div>; // 오류 발생 시 표시
+    const totalPages = Math.ceil(filteredEtfData.length / ITEMS_PER_PAGE); // 총 페이지 수 계산
 
     return (
         <div style={{ padding: '16px' }}>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {currentEtfs.map((etf) => (
-                    <li
-                        key={etf.etfCode}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#f0f0f0',
-                            border: '1px solid #ddd',
-                            borderRadius: '4px',
-                            padding: '16px',
-                            marginBottom: '10px',
-                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                            width: '80%',
-                            margin: '20px auto',
-                        }}
-                    >
-                        <LineChart
-                            series={[
-                                {
-                                    data: chartData[etf.etfCode],
-                                    color: 'black',
-                                },
-                            ]}
-                            width={500}
-                            height={300}
-                            leftAxis={null}
-                            bottomAxis={null}
-                            axisHighlight={{
-                                x: 'none',
-                                y: 'none',
-                            }}
-                        />
-                        <div style={{ margin: '0 200px 0 0' }}>
-                            <EtfTitleTypography>{etf.etfName}</EtfTitleTypography>
-                            <div style={{ display: 'flex' }}>
-                                <div>
-                                    <EtfContentTypography>종가 {etf.etfPrice} </EtfContentTypography>
-                                    <EtfContentTypography>운용사 {etf.fundManager}</EtfContentTypography>
-                                </div>
-                                <div>
-                                    <ToEtfDetailButton variant="contained">추가하기</ToEtfDetailButton>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <Box display="flex" justifyContent="center" mt={2}>
-                <Button
-                    variant="contained"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                >
-                    이전
-                </Button>
-                <Box mx={1}>
-                    {currentPage} / {totalPages}
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <CircularProgress />
                 </Box>
-                <Button
-                    variant="contained"
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                >
-                    다음
-                </Button>
-            </Box>
+            ) : (
+                <>
+                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                        {currentEtfs.map((etf) => (
+                            <li
+                                key={etf.symbol}
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#f0f0f0',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    padding: '16px',
+                                    marginBottom: '10px',
+                                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                                    width: '80%',
+                                    margin: '20px auto',
+                                }}
+                            >
+                                <div style={{ margin: '0 200px 0 0' }}>
+                                    <EtfTitleTypography>{etf.etfName}</EtfTitleTypography>
+                                    <div style={{ display: 'flex' }}>
+                                        <div>
+                                            <EtfContentTypography>종가 {etf.etfPrice} </EtfContentTypography>
+                                            <EtfContentTypography>운용사 {etf.fundmanager}</EtfContentTypography>
+                                            <EtfContentTypography>국가 {etf.Country}</EtfContentTypography>
+                                        </div>
+                                        <div>
+                                            <ToEtfDetailButton
+                                                variant="contained"
+                                                onClick={() => navigate(`/etf/detail?etfCode=${etf.symbol}`)}
+                                            >
+                                                추가하기
+                                            </ToEtfDetailButton>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Typography variant="h6" align="center">
+                                        {etf.Country === 'KOREA'
+                                            ? '월별 데이터 (21.9 ~ 24.9)'
+                                            : '연도별 데이터 (14. ~ 24.)'}
+                                    </Typography>
+                                    <LineChart
+                                        series={[
+                                            {
+                                                data: etf.chartPrice.map((price) => parseFloat(price)),
+                                                color: 'black',
+                                            },
+                                        ]}
+                                        width={500}
+                                        height={300}
+                                        leftAxis={null}
+                                        bottomAxis={null}
+                                        axisHighlight={{
+                                            x: 'none',
+                                            y: 'none',
+                                        }}
+                                    />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <Box display="flex" justifyContent="center" mt={2}>
+                        <Button
+                            variant="contained"
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                        >
+                            이전
+                        </Button>
+                        <Box mx={1}>
+                            {currentPage} / {totalPages}
+                        </Box>
+                        <Button
+                            variant="contained"
+                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                        >
+                            다음
+                        </Button>
+                    </Box>
+                </>
+            )}
         </div>
     );
 };

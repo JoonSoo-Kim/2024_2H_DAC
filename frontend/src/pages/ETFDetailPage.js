@@ -1,12 +1,38 @@
-import React, { useState } from 'react';
-import ETFDetailTop from '../components/ETFDetailTop'; // 경로에 맞게 수정
-import { AppBar, Grid, Toolbar } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ETFDetailTop from '../components/ETFDetailTop';
+import { AppBar, Grid, Toolbar, Button } from '@mui/material';
 import Logo from '../components/Logo';
 import ETFDetailInfo from '../components/ETFDetailInfo';
 import ETFDetailRecommand from '../components/ETFDetailRecommand';
+import getRecommend from '../utils/getRecommend';
 
 const ETFDetailPage = () => {
-    const [selectedCode, setSelectedCode] = useState('006950'); // 기본 선택 값
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const etfCode = queryParams.get('etfCode');
+    const [selectedCode, setSelectedCode] = useState(etfCode);
+    const [recommendations, setRecommendations] = useState({});
+    const [selectedRecommendation, setSelectedRecommendation] = useState(null);
+    const navigate = useNavigate();
+
+    const handlePurchaseClick = () => {
+        navigate(`/etf/purchase?etfCode=${selectedCode}&recommendationCode=${selectedRecommendation}`);
+    };
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            try {
+                const response = await getRecommend(etfCode);
+                setRecommendations(response);
+                console.log(recommendations);
+            } catch (error) {
+                console.error('Failed to fetch recommendations:', error);
+            }
+        };
+
+        fetchRecommendations();
+    }, [etfCode]);
 
     return (
         <div>
@@ -16,14 +42,22 @@ const ETFDetailPage = () => {
                 </Toolbar>
             </AppBar>
             <Grid>
-                <ETFDetailTop />
+                <ETFDetailTop etfCode={selectedCode} selectedRecommendation={selectedRecommendation} />
             </Grid>
             <div style={{ display: 'flex', alignItems: 'center', margin: '20px' }}>
-                <ETFDetailRecommand selectedCode={selectedCode} onSelect={setSelectedCode} />
+                <ETFDetailRecommand
+                    recommendations={recommendations}
+                    selectedRecommendation={selectedRecommendation}
+                    onSelect={setSelectedRecommendation}
+                />
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <ETFDetailInfo etfCode={'069500'} />
-                <ETFDetailInfo etfCode={selectedCode} />
+                <ETFDetailInfo etfCode={selectedCode} selectedRecommendation={selectedRecommendation} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px' }}>
+                <Button variant="contained" color="primary" onClick={handlePurchaseClick}>
+                    구매 페이지로 이동
+                </Button>
             </div>
         </div>
     );

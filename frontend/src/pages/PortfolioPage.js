@@ -6,6 +6,7 @@ import PortfolioItems from '../components/PortfolioItems';
 import { generateColorFromUserId } from '../utils/generateGraphColor';
 import { AppBar, Toolbar } from '@mui/material';
 import Logo from '../components/Logo';
+import LogoutButton from '../components/LogoutButton';
 
 const PortfolioPage = () => {
     const [products, setProducts] = useState([]);
@@ -59,10 +60,11 @@ const PortfolioPage = () => {
             <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
                 <Toolbar>
                     <Logo />
+                    <LogoutButton />
                 </Toolbar>
             </AppBar>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', height: '100vh' }}>
-                <div style={{ width: '50%', height: '600px', alignContent: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', minHeight: '100vh' }}>
+                <div style={{ width: '40%', height: '600px', alignContent: 'center' }}>
                     <PortfolioGraph data={data} options={options} />
                     <ToETFButton />
                 </div>
@@ -70,16 +72,16 @@ const PortfolioPage = () => {
                 <div
                     style={{
                         display: 'flex',
-                        width: '40%',
-                        height: '80%',
+                        width: '55%',
                         border: '2px solid #ccc',
                         borderRadius: '8px',
                         padding: '10px',
                         boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                         flexDirection: 'column',
+                        alignSelf: 'flex-start',
+                        minHeight: '600px',
                     }}
                 >
-                    <h2 style={{ margin: '0 0 10px 0', width: '100%' }}>금융 상품 정보</h2>
                     <PortfolioItems products={products} backgroundColors={data.datasets[0].backgroundColor} />
                 </div>
             </div>

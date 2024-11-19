@@ -9,9 +9,13 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
+    AppBar,
+    Toolbar,
 } from '@mui/material';
 import { createTendency } from '../utils/createTendency';
 import { getTendency } from '../utils/getTendency';
+import Logo from '../components/Logo';
+import LogoutButton from '../components/LogoutButton';
 
 const SurveyPage = () => {
     const [responses, setResponses] = useState({
@@ -108,6 +112,12 @@ const SurveyPage = () => {
                 padding: '20px',
             }}
         >
+            <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+                <Toolbar>
+                    <Logo />
+                    <LogoutButton />
+                </Toolbar>
+            </AppBar>
             <Typography variant="h4" gutterBottom>
                 나의 성향 설문조사
             </Typography>

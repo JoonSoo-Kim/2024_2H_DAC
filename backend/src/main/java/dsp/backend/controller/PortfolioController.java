@@ -2,6 +2,8 @@ package dsp.backend.controller;
 
 import dsp.backend.service.PortfolioService;
 import dsp.backend.service.ResourceNotFoundException;
+import dsp.backend.utils.CountryEnum;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +85,7 @@ public class PortfolioController {
         private Integer count;
         private Double money;
         private Double percent;
+        private CountryEnum country;
 
         // Getters and setters
         public String getEtfCode() {
@@ -123,6 +126,14 @@ public class PortfolioController {
 
         public void setPercent(Double percent) {
             this.percent = percent;
+        }
+
+        public CountryEnum getCountry() {
+            return country;
+        }
+
+        public void setCountry(CountryEnum country) {
+            this.country = country;
         }
     }
 }

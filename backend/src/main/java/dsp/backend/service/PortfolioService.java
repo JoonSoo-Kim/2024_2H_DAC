@@ -1,10 +1,12 @@
 package dsp.backend.service;
 
+import dsp.backend.Entity.ETF;
 import dsp.backend.Entity.Portfolio;
 import dsp.backend.Entity.PortfolioId;
 import dsp.backend.controller.PortfolioController;
 import dsp.backend.repository.PortfolioRepository;
 import dsp.backend.repository.UserRepository;
+import dsp.backend.utils.CountryEnum;
 import dsp.backend.repository.ETFRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,15 +59,30 @@ public class PortfolioService {
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 정보"));
 
         List<Portfolio> portfolios = portfolioRepository.findByUserId(userId);
-        double totalMoney = portfolios.stream().mapToDouble(p -> p.getCount() * p.getEtf().getCurrentPrice()).sum();
+        double totalMoney = portfolios.stream().mapToDouble(p -> {
+            ETF etf = etfRepository.findBySymbol(p.getSymbol()).get();
+            if (etf.getCountry() == CountryEnum.USA) {
+                return p.getCount() * etf.getCurrentPrice() * 1395;
+            } else {
+                return p.getCount() * etf.getCurrentPrice();
+            }
+        }).sum();
 
         return portfolios.stream().map(p -> {
             PortfolioController.PortfolioResponse response = new PortfolioController.PortfolioResponse();
-            response.setEtfCode(p.getSymbol());
-            response.setEtfName(p.getEtf().getLongName());
-            response.setCount(p.getCount());
-            response.setMoney(p.getCount() * p.getEtf().getCurrentPrice());
+            ETF etf = etfRepository.findBySymbol(p.getSymbol()).get();
+            if(etf.getCountry() == CountryEnum.USA){
+                response.setMoney(p.getCount() * etf.getCurrentPrice() * 1395);
+            } else { 
+                response.setMoney(p.getCount() * etf.getCurrentPrice());
+            }
+
             response.setPercent((response.getMoney() / totalMoney) * 100);
+            response.setEtfCode(p.getSymbol());
+            response.setEtfName(etf.getLongName());
+            response.setCount(p.getCount());
+            response.setCountry(etf.getCountry());
+
             return response;
         }).collect(Collectors.toList());
     }

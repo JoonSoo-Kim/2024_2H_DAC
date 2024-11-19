@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ETFAddChart from '../components/ETFAddChart';
-import { Typography, TextField, Button, Grid } from '@mui/material';
+import { Typography, TextField, Button, Grid, AppBar, Toolbar } from '@mui/material';
 import getETFDetailInfo from '../utils/getETFDetailInfo';
 import getETFPrice from '../utils/getETFPrice';
 import { addPortfolio } from '../utils/addPortfolio';
+import Logo from '../components/Logo';
+import LogoutButton from '../components/LogoutButton';
 
 const ETFPurchasePage = () => {
     const location = useLocation();
@@ -90,6 +92,12 @@ const ETFPurchasePage = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+                <Toolbar>
+                    <Logo />
+                    <LogoutButton />
+                </Toolbar>
+            </AppBar>
             <ETFAddChart
                 data={averageData}
                 showFirst={showFirst}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@mui/material';
+import { Typography } from '@mui/material';
 import { logoutUser } from '../utils/logoutUser';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,19 +20,26 @@ const LogoutButton = () => {
     };
 
     return (
-        <Button
-            variant="contained"
+        <Typography
+            onClick={handleLogout}
             style={{
                 fontFamily: 'Jua, sans-serif',
-                fontSize: '2rem',
+                fontSize: '1rem',
                 marginTop: '10px',
-                width: '150px',
-                height: '50px',
+                width: '60px',
+                height: '40px',
+                backgroundColor: 'white',
+                color: 'black',
+                textDecoration: 'underline',
+                position: 'absolute',
+                right: '20px',
+                lineHeight: '50px',
+                textAlign: 'center',
+                cursor: 'pointer',
             }}
-            onClick={handleLogout}
         >
             로그아웃
-        </Button>
+        </Typography>
     );
 };
 

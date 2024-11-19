@@ -4,7 +4,16 @@ import Button from '@mui/material/Button';
 
 const ETFDetailPeriodButton = ({ filterDuration, setFilterDuration, filterData }) => {
     return (
-        <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'row' }}>
+        <div
+            style={{
+                marginBottom: '10px',
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: '-40px',
+                justifyContent: 'flex-start',
+                marginLeft: '10%', // Adjust this value to move the buttons slightly to the right
+            }}
+        >
             <Button
                 variant={filterDuration === '10년' ? 'contained' : 'outlined'}
                 onClick={() => {

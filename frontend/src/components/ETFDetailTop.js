@@ -182,7 +182,7 @@ const ETFDetailTop = ({ etfCode, selectedRecommendation }) => {
                     setFilterDuration={setFilterDuration}
                     filterData={filterData}
                 />
-                <ETFDetailUnitButton
+                {/* <ETFDetailUnitButton
                     aggregation={aggregation}
                     setAggregation={setAggregation}
                     filteredData={filteredData}
@@ -190,7 +190,7 @@ const ETFDetailTop = ({ etfCode, selectedRecommendation }) => {
                     aggregateMonthly={aggregateMonthly}
                     aggregateYearly={aggregateYearly}
                     setFilteredData={setFilteredData}
-                />
+                /> */}
             </div>
         </div>
     );

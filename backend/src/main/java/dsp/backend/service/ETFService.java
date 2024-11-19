@@ -61,15 +61,25 @@ public class ETFService {
             Map<String, Object> etfInfo = new HashMap<>();
             etfInfo.put("symbol", etf.getSymbol());
             etfInfo.put("longName", etf.getLongName());
-            etfInfo.put("currentPrice", etf.getCurrentPrice());
+            double currentPrice = etf.getCurrentPrice();
+            double week52High = etf.getWeek52High();
+            double week52Low = etf.getWeek52Low();
+            double navPrice = etf.getNavPrice();
+            if (etf.getCountry() == CountryEnum.USA) {
+                currentPrice *= 1395;
+                week52High = Math.round(week52High * 1395);
+                week52Low = Math.round(week52Low * 1395);
+                navPrice = Math.round(navPrice * 1395);
+            }
+            etfInfo.put("currentPrice", currentPrice);
+            etfInfo.put("week52High", week52High);
+            etfInfo.put("week52Low", week52Low);
             etfInfo.put("sharesOutstanding", etf.getSharesOutstanding());
-            etfInfo.put("week52High", etf.getWeek52High());
-            etfInfo.put("week52Low", etf.getWeek52Low());
             etfInfo.put("benchmark", etf.getBenchmark());
             etfInfo.put("ipoDate", etf.getIpoDate());
             etfInfo.put("expenseRatio", etf.getExpenseRatio());
             etfInfo.put("fundManager", etf.getFundManager());
-            etfInfo.put("navPrice", etf.getNavPrice());
+            etfInfo.put("navPrice", navPrice);
             etfInfo.put("monthChange", etf.getMonthChange());
             etfInfo.put("quarterChange", etf.getQuarterChange());
             etfInfo.put("yearChange", etf.getYearChange());
@@ -240,7 +250,11 @@ public class ETFService {
             Map<String, Object> etfDetail = new HashMap<>();
             etfDetail.put("symbol", etf.getSymbol());
             etfDetail.put("etfName", etf.getLongName());
-            etfDetail.put("etfPrice", etf.getCurrentPrice());
+            double etfPrice = etf.getCurrentPrice();
+            if (etf.getCountry() == CountryEnum.USA) {
+                etfPrice = Math.round(etfPrice * 1395);
+            }
+            etfDetail.put("etfPrice", etfPrice);
             etfDetail.put("Country", etf.getCountry().name());
             etfDetail.put("fundmanager", etf.getFundManager());
 

@@ -17,8 +17,9 @@ export const getPortfolioItem = async () => {
             name: item.etfName,
             code: item.etfCode,
             quantity: Number(item.count),
-            amount: Number(item.money),
-            percentage: Number(item.percent),
+            amount: Math.round(Number(item.money)),
+            percentage: Number(item.percent).toFixed(2),
+            country: item.country,
         }));
     } catch (error) {
         console.error('포트폴리오 데이터 요청 중 에러 발생:', error);

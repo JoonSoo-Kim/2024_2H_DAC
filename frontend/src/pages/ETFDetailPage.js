@@ -4,8 +4,8 @@ import ETFDetailTop from '../components/ETFDetailTop';
 import { AppBar, Grid, Toolbar, Button } from '@mui/material';
 import Logo from '../components/Logo';
 import ETFDetailInfo from '../components/ETFDetailInfo';
-import ETFDetailRecommand from '../components/ETFDetailRecommand';
 import getRecommend from '../utils/getRecommend';
+import LogoutButton from '../components/LogoutButton';
 
 const ETFDetailPage = () => {
     const location = useLocation();
@@ -39,20 +39,19 @@ const ETFDetailPage = () => {
             <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
                 <Toolbar>
                     <Logo />
+                    <LogoutButton />
                 </Toolbar>
             </AppBar>
             <Grid>
                 <ETFDetailTop etfCode={selectedCode} selectedRecommendation={selectedRecommendation} />
             </Grid>
-            <div style={{ display: 'flex', alignItems: 'center', margin: '20px' }}>
-                <ETFDetailRecommand
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ETFDetailInfo
+                    etfCode={selectedCode}
                     recommendations={recommendations}
                     selectedRecommendation={selectedRecommendation}
-                    onSelect={setSelectedRecommendation}
+                    setSelectedRecommendation={setSelectedRecommendation}
                 />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <ETFDetailInfo etfCode={selectedCode} selectedRecommendation={selectedRecommendation} />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px' }}>
                 <Button variant="contained" color="primary" onClick={handlePurchaseClick}>

@@ -4,6 +4,7 @@ import Logo from '../components/Logo';
 import ETFSearch from '../components/ETFSearch';
 import ETFList from '../components/ETFList';
 import { getEtfList } from '../utils/getEtfList';
+import LogoutButton from '../components/LogoutButton';
 
 const ETFListPage = () => {
     const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
@@ -49,6 +50,7 @@ const ETFListPage = () => {
             <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
                 <Toolbar>
                     <Logo />
+                    <LogoutButton />
                 </Toolbar>
             </AppBar>
             <Grid container style={{ height: '100vh' }}>

@@ -31,7 +31,13 @@ const TendencyDetails = ({ tendency }) => {
                     />
                 </div>
                 <hr style={{ border: '1px solid grey', width: '100%', margin: '20px 0' }} />
-                <div className="tendency-question">
+                <div
+                    className="tendency-question"
+                    style={{
+                        maxWidth: '800px',
+                        width: '100%',
+                    }}
+                >
                     <Typography variant="h6">
                         질문 1. 당신은 높은 수익을 위해 큰 위험을 감수할 준비가 되어 있습니까?
                     </Typography>

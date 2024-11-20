@@ -3,7 +3,7 @@ import { getPortfolioItem } from '../utils/getPortFolioItem';
 import PortfolioGraph from '../components/PortfolioGraph';
 import ToETFButton from '../components/ToETFButton';
 import { generateColorFromUserId } from '../utils/generateGraphColor';
-import { AppBar, Paper, Toolbar } from '@mui/material';
+import { AppBar, createTheme, Paper, ThemeProvider, Toolbar } from '@mui/material';
 import Logo from '../components/Logo';
 import LogoutButton from '../components/LogoutButton';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,18 @@ const MainPage = () => {
     const [tendency, setTendency] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const theme = createTheme({
+        typography: {
+            fontFamily: " 'GmarketSansLight', sans-serif",
+        },
+    });
+
+    const fontStyle = {
+        fontFamily: 'GmarketSansMedium, sans-serif',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+    };
 
     useEffect(() => {
         const fetchTendency = async () => {
@@ -79,56 +91,70 @@ const MainPage = () => {
     };
 
     return (
-        <div>
-            <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-                <Toolbar>
-                    <Logo />
-                    <LogoutButton />
-                </Toolbar>
-            </AppBar>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', height: '100vh' }}>
-                <div
-                    style={{
-                        width: '45%',
-                        height: '600px',
-                        alignContent: 'center',
-                        cursor: 'pointer',
-                        transition: 'transform 0.2s',
-                        ':hover': { transform: 'scale(1.05)' },
-                        textAlign: 'center',
-                    }}
-                    onClick={() => navigate('/portfolio')}
-                >
-                    <PortfolioGraph data={data} options={options} />
+        <ThemeProvider theme={theme}>
+            <style>
+                {`
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+                `}
+            </style>
+            <div>
+                <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+                    <Toolbar>
+                        <Logo />
+                        <LogoutButton />
+                    </Toolbar>
+                </AppBar>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', height: '100vh' }}>
+                    <div
+                        style={{
+                            width: '45%',
+                            height: '600px',
+                            alignContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s',
+                            ':hover': { transform: 'scale(1.05)' },
+                            textAlign: 'center',
+                        }}
+                        onClick={() => navigate('/portfolio')}
+                    >
+                        <PortfolioGraph data={data} options={options} />
+                    </div>
+                    <div style={{ marginTop: '0.5%', marginLeft: '-53%', ...fontStyle }}> 포트폴리오 페이지</div>
+                    <Paper
+                        style={{
+                            width: '45%',
+                            height: '600px',
+                            position: 'relative',
+                            border: '2px solid #ccc',
+                            borderRadius: '8px',
+                            padding: '10px',
+                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s',
+                            ':hover': { transform: 'scale(1.05)' },
+                            textAlign: 'center',
+                        }}
+                        onClick={() => navigate('/tendency')}
+                    >
+                        <div style={{ marginLeft: '2%', ...fontStyle }}> 성향 페이지</div>
+                        {tendency && (
+                            <>
+                                <TendencyGaugeSection tendency={tendency} style={{ marginTop: '60px' }} />
+                                <TendencyDescriptionSection
+                                    tendency={tendency}
+                                    style={{ transform: 'scale(1.2)', marginTop: '-80px' }}
+                                />
+                            </>
+                        )}
+                    </Paper>
                 </div>
-                <Paper
-                    style={{
-                        width: '45%',
-                        height: '600px',
-                        position: 'relative',
-                        border: '2px solid #ccc',
-                        borderRadius: '8px',
-                        padding: '10px',
-                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                        cursor: 'pointer',
-                        transition: 'transform 0.2s',
-                        ':hover': { transform: 'scale(1.05)' },
-                        textAlign: 'center',
-                    }}
-                    onClick={() => navigate('/tendency')}
-                >
-                    {tendency && (
-                        <>
-                            <TendencyGaugeSection tendency={tendency} style={{ marginTop: '60px' }} />
-                            <TendencyDescriptionSection
-                                tendency={tendency}
-                                style={{ transform: 'scale(1.2)', marginTop: '-60px' }}
-                            />
-                        </>
-                    )}
-                </Paper>
             </div>
-        </div>
+        </ThemeProvider>
     );
 };
 

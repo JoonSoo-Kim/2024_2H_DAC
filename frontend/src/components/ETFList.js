@@ -58,24 +58,6 @@ const ETFList = ({ filteredEtfData }) => {
                                     margin: '20px auto',
                                 }}
                             >
-                                <div style={{ margin: '0 200px 0 0' }}>
-                                    <EtfTitleTypography>{etf.etfName}</EtfTitleTypography>
-                                    <div style={{ display: 'flex' }}>
-                                        <div>
-                                            <EtfContentTypography>종가 {etf.etfPrice} </EtfContentTypography>
-                                            <EtfContentTypography>운용사 {etf.fundmanager}</EtfContentTypography>
-                                            <EtfContentTypography>국가 {etf.Country}</EtfContentTypography>
-                                        </div>
-                                        <div>
-                                            <ToEtfDetailButton
-                                                variant="contained"
-                                                onClick={() => navigate(`/etf/detail?etfCode=${etf.symbol}`)}
-                                            >
-                                                추가하기
-                                            </ToEtfDetailButton>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div>
                                     <Typography variant="h6" align="center">
                                         {etf.Country === 'KOREA'
@@ -98,6 +80,36 @@ const ETFList = ({ filteredEtfData }) => {
                                             y: 'none',
                                         }}
                                     />
+                                </div>
+                                <div style={{ margin: '0 200px 0 0', width: '100%' }}>
+                                    <EtfTitleTypography style={{ display: 'flex', marginLeft: '10%' }}>
+                                        {etf.etfName}
+                                    </EtfTitleTypography>
+                                    <div style={{ display: 'flex', marginLeft: '10%' }}>
+                                        <div>
+                                            <EtfContentTypography>
+                                                종가{' '}
+                                                {etf.Country === 'USA' ? Math.round(etf.etfPrice * 1395) : etf.etfPrice}{' '}
+                                                원
+                                            </EtfContentTypography>
+                                            <EtfContentTypography>운용사 {etf.fundmanager}</EtfContentTypography>
+                                            <EtfContentTypography>국가 {etf.Country}</EtfContentTypography>
+                                        </div>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            alignContent: 'flex-end',
+                                        }}
+                                    >
+                                        <ToEtfDetailButton
+                                            variant="contained"
+                                            onClick={() => navigate(`/etf/detail?etfCode=${etf.symbol}`)}
+                                        >
+                                            추가하기
+                                        </ToEtfDetailButton>
+                                    </div>
                                 </div>
                             </li>
                         ))}

@@ -15,8 +15,8 @@ const ETFPurchasePage = () => {
     const recommendationCode = queryParams.get('recommendationCode');
     const navigate = useNavigate();
 
-    const [firstQuantity, setFirstQuantity] = useState(1);
-    const [secondQuantity, setSecondQuantity] = useState(1);
+    const [firstQuantity, setFirstQuantity] = useState('1');
+    const [secondQuantity, setSecondQuantity] = useState('1');
     const [firstPrice, setFirstPrice] = useState(0);
     const [secondPrice, setSecondPrice] = useState(0);
     const [firstData, setFirstData] = useState([]);
@@ -63,13 +63,16 @@ const ETFPurchasePage = () => {
 
     const calculateAverage = (data1, data2) => {
         console.log('Calculating average with:', data1, data2);
+        const fq = parseInt(firstQuantity) || 0;
+        const sq = parseInt(secondQuantity) || 0;
+        const totalQuantity = fq + sq || 1;
         const combinedData = data1.map((item, index) => {
             const price2 = index < data2.length ? data2[index].price : 0;
             return {
                 date: item.date,
-                firstPrice: item.price * firstQuantity,
-                secondPrice: price2 * secondQuantity,
-                averagePrice: (item.price * firstQuantity + price2 * secondQuantity) / 2,
+                firstPrice: item.price,
+                secondPrice: price2,
+                averagePrice: (item.price * fq + price2 * sq) / totalQuantity,
             };
         });
         console.log('Combined Data:', combinedData);
@@ -80,11 +83,11 @@ const ETFPurchasePage = () => {
         calculateAverage(firstData, secondData);
     }, [firstQuantity, secondQuantity, firstData, secondData]);
 
-    const totalAmount = firstPrice * firstQuantity + secondPrice * secondQuantity;
+    const totalAmount = firstPrice * (parseInt(firstQuantity) || 0) + secondPrice * (parseInt(secondQuantity) || 0);
 
     const handlePurchase = () => {
-        addPortfolio(etfCode, firstQuantity);
-        addPortfolio(recommendationCode, secondQuantity);
+        addPortfolio(etfCode, parseInt(firstQuantity) || 0);
+        addPortfolio(recommendationCode, parseInt(secondQuantity) || 0);
         console.log(`Added ${firstQuantity} of ${etfCode} to portfolio`);
         console.log(`Added ${secondQuantity} of ${recommendationCode} to portfolio`);
         navigate('/portfolio');
@@ -113,7 +116,7 @@ const ETFPurchasePage = () => {
                         label={`${etfCode} 수량`}
                         type="number"
                         value={firstQuantity}
-                        onChange={(e) => setFirstQuantity(Number(e.target.value))}
+                        onChange={(e) => setFirstQuantity(e.target.value.replace(/\D/g, ''))}
                         fullWidth
                     />
                 </Grid>
@@ -122,12 +125,12 @@ const ETFPurchasePage = () => {
                         label={`${recommendationCode} 수량`}
                         type="number"
                         value={secondQuantity}
-                        onChange={(e) => setSecondQuantity(Number(e.target.value))}
+                        onChange={(e) => setSecondQuantity(e.target.value.replace(/\D/g, ''))}
                         fullWidth
                     />
                 </Grid>
             </Grid>
-            <Typography variant="h6">총 금액: {totalAmount.toLocaleString()} 원</Typography>
+            <Typography variant="h6">총 금액: {Math.round(totalAmount).toLocaleString()} 원</Typography>
             <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={handlePurchase}>
                 구매 확정
             </Button>

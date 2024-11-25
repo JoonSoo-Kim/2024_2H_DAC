@@ -102,6 +102,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                     <Table>
                         <TableHead>
                             <TableRow>
+                                <TableCell style={{ fontSize: '0.8rem' }}>분류</TableCell>
                                 <TableCell style={{ fontSize: '0.8rem' }}>이름</TableCell>
                                 <TableCell style={{ fontSize: '0.8rem' }}>현재 주가</TableCell>
                                 <TableCell style={{ fontSize: '0.8rem' }}>상장주식수</TableCell>
@@ -128,6 +129,30 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                 >
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {index === 0
+                                            ? '기준 상품'
+                                            : index === 1
+                                            ? '보수적'
+                                            : index === 2
+                                            ? '중립적'
+                                            : index === 3
+                                            ? '공격적'
+                                            : index === 4
+                                            ? '성향 추천'
+                                            : '성향 추천'}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -140,6 +165,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -152,6 +178,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -164,6 +191,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -176,6 +204,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -188,6 +217,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -200,6 +230,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -212,6 +243,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -224,6 +256,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -236,6 +269,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -248,6 +282,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -260,6 +295,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'
@@ -272,6 +308,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                                     </TableCell>
                                     <TableCell
                                         style={{
+                                            fontSize: '0.8rem',
                                             color:
                                                 data.code === etfCode
                                                     ? 'red'

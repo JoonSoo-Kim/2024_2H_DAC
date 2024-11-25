@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    ThemeProvider,
+    createTheme,
+} from '@mui/material';
 import getETFDetailInfo from '../utils/getETFDetailInfo';
 
 const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSelectedRecommendation }) => {
@@ -23,6 +34,10 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
         fetchData();
     }, [etfCode]);
 
+    const formatAmount = (amount) => {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     useEffect(() => {
         const fetchRecommendationData = async () => {
             try {
@@ -32,6 +47,7 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
                     acc[key] = { ...dataResults[index], code: recommendations[key][0] };
                     return acc;
                 }, {});
+                console.log(dataMap);
                 setRecommendationData(dataMap);
             } catch (err) {
                 setError(err);
@@ -53,198 +69,226 @@ const ETFDetailInfo = ({ etfCode, recommendations, selectedRecommendation, setSe
         );
     }
 
+    const fontStyle = {
+        fontFamily: 'GmarketSansLight, sans-serif',
+        fontWeight: 'normal', // Set font weight to normal for GmarketSansLight
+    };
+
+    const theme = createTheme({
+        typography: {
+            fontFamily: " 'GmarketSansLight', sans-serif",
+        },
+    });
+
     const allData = [etfData, ...Object.values(recommendationData)];
 
     return (
-        <TableContainer component={Paper} style={{ width: '80%', margin: '0 auto' }}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>이름</TableCell>
-                        <TableCell>현재 주가</TableCell>
-                        <TableCell>상장주식수</TableCell>
-                        <TableCell>52주 최고</TableCell>
-                        <TableCell>52주 최저</TableCell>
-                        <TableCell>기초 지수</TableCell>
-                        <TableCell>상장일</TableCell>
-                        <TableCell>운용보수</TableCell>
-                        <TableCell>자산운용사</TableCell>
-                        <TableCell>NAV</TableCell>
-                        <TableCell>1개월 수익률</TableCell>
-                        <TableCell>3개월 수익률</TableCell>
-                        <TableCell>6개월 수익률</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {allData.map((data, index) => (
-                        <TableRow
-                            key={index}
-                            onClick={() => setSelectedRecommendation(data.code)}
-                            style={{
-                                cursor: 'pointer',
-                            }}
-                        >
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.longName}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.currentPrice}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.sharesOutstanding}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.week52High}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.week52Low}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.benchmark}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.ipoDate}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.expenseRatio}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.fundManager}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.navPrice}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.monthChange}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.quarterChange}
-                            </TableCell>
-                            <TableCell
-                                style={{
-                                    color:
-                                        data.code === etfCode
-                                            ? 'red'
-                                            : data.code === selectedRecommendation
-                                            ? 'blue'
-                                            : 'gray',
-                                }}
-                            >
-                                {data.yearChange}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <>
+            <style>
+                {`
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+        `}
+            </style>
+            <ThemeProvider theme={theme}>
+                <TableContainer
+                    component={Paper}
+                    style={{ width: '90%', margin: '0 auto', textAlign: 'center', ...fontStyle }}
+                >
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ fontSize: '0.8rem' }}>이름</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>현재 주가</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>상장주식수</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>52주 최고</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>52주 최저</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>기초 지수</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>상장일</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>운용보수</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>자산운용사</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>NAV</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>1개월 수익률</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>3개월 수익률</TableCell>
+                                <TableCell style={{ fontSize: '0.8rem' }}>6개월 수익률</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {allData.map((data, index) => (
+                                <TableRow
+                                    key={index}
+                                    onClick={() => setSelectedRecommendation(data.code)}
+                                    style={{
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.longName}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {formatAmount(Math.round(data.currentPrice))}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {formatAmount(data.sharesOutstanding)}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {formatAmount(Math.round(data.week52High))}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {formatAmount(Math.round(data.week52Low))}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.benchmark}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.ipoDate}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.expenseRatio}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.fundManager}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {formatAmount(data.navPrice)}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.monthChange.toFixed(2)}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.quarterChange.toFixed(2)}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color:
+                                                data.code === etfCode
+                                                    ? 'red'
+                                                    : data.code === selectedRecommendation
+                                                    ? 'blue'
+                                                    : 'gray',
+                                        }}
+                                    >
+                                        {data.yearChange.toFixed(2)}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </ThemeProvider>
+        </>
     );
 };
 

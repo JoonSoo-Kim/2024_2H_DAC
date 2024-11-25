@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { deletePortfolio } from '../utils/deletePortfolio';
 
 const PortfolioItems = ({ products, backgroundColors }) => {
     const navigate = useNavigate();
@@ -8,6 +9,16 @@ const PortfolioItems = ({ products, backgroundColors }) => {
 
     const handleRowClick = (productCode) => {
         navigate(`/etf/detail?etfCode=${productCode}`);
+    };
+
+    const handleDeleteClick = async (event, etfCode) => {
+        event.stopPropagation(); // Prevent the row click event
+        try {
+            await deletePortfolio(etfCode);
+            window.location.reload(); // Refresh the page after deletion
+        } catch (error) {
+            console.error('Error deleting portfolio:', error);
+        }
     };
 
     const formatAmount = (amount) => {
@@ -41,6 +52,7 @@ const PortfolioItems = ({ products, backgroundColors }) => {
                             <TableCell style={{ textAlign: 'center', ...fontStyle }}>수량</TableCell>
                             <TableCell style={{ textAlign: 'center', ...fontStyle }}>금액</TableCell>
                             <TableCell style={{ textAlign: 'center', ...fontStyle }}>비율</TableCell>
+                            <TableCell style={{ textAlign: 'center', ...fontStyle }}></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -73,6 +85,9 @@ const PortfolioItems = ({ products, backgroundColors }) => {
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center', ...fontStyle }}>
                                     {product.percentage} %
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    <button onClick={(event) => handleDeleteClick(event, product.code)}>삭제</button>
                                 </TableCell>
                             </TableRow>
                         ))}

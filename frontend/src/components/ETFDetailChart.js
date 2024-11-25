@@ -46,13 +46,25 @@ const ETFDetailChart = ({ data }) => {
         );
     };
 
+    const processedData = data.map((item) => ({
+        ...item,
+        firstPrice: Math.round(item.firstPrice),
+        secondPrice: Math.round(item.secondPrice),
+        averagePrice: Math.round(item.averagePrice),
+    }));
+
+    // Calculate min and max values
+    const allPrices = processedData.flatMap((item) => [item.firstPrice, item.secondPrice]);
+    const minValue = Math.min(...allPrices);
+    const maxValue = Math.max(...allPrices);
+
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ResponsiveContainer width="80%" height={400}>
-                <LineChart data={data}>
+                <LineChart data={processedData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" tick={false} />
-                    <YAxis />
+                    <YAxis domain={[minValue, maxValue]} />
                     <Tooltip />
                     <Legend content={renderLegend} />
                     <Line
@@ -60,7 +72,7 @@ const ETFDetailChart = ({ data }) => {
                         dataKey="firstPrice"
                         stroke="red"
                         dot={false}
-                        name="First"
+                        name="기준 상품"
                         hide={!showFirst}
                     />
                     <Line
@@ -68,7 +80,7 @@ const ETFDetailChart = ({ data }) => {
                         dataKey="secondPrice"
                         stroke="blue"
                         dot={false}
-                        name="Second"
+                        name="선택 추천 상품"
                         hide={!showSecond}
                     />
                     <Line
@@ -76,7 +88,7 @@ const ETFDetailChart = ({ data }) => {
                         dataKey="averagePrice"
                         stroke="#9370DB"
                         dot={false}
-                        name="Average"
+                        name="헤지 예상값"
                         hide={!showAverage}
                     />
                 </LineChart>

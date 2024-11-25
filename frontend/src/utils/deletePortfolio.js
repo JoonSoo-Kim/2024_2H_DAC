@@ -1,19 +1,18 @@
 import { getCookie } from './getCookie';
 
-const ADD_PORTFOLIO_URL = process.env.REACT_APP_BACKEND_URL + '/portfolio';
+const DELETE_PORTFOLIO_URL = process.env.REACT_APP_BACKEND_URL + '/portfolio';
 
-export const addPortfolio = async (etfCode, count) => {
+export const deletePortfolio = async (etfCode) => {
     const requestData = {
         userId: getCookie('userId'),
         etfCode: etfCode,
-        count: count,
     };
 
     console.log(requestData);
 
     try {
-        const response = await fetch(ADD_PORTFOLIO_URL, {
-            method: 'POST',
+        const response = await fetch(DELETE_PORTFOLIO_URL, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },

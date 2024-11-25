@@ -22,11 +22,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -55,7 +57,17 @@ public class ETFService {
 
     public Optional<Map<String, Object>> getETFInfo(String symbol) {
         logger.info("Fetching ETF info for symbol: {}", symbol);
-        Optional<ETF> etfOptional = etfRepository.findBySymbol(symbol);
+        try {
+            symbol = URLDecoder.decode(symbol, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Error decoding symbol: {}", symbol, e);
+        }
+        Optional<ETF> etfOptional;
+        if (symbol.contains(" ")) {
+            etfOptional = etfRepository.findByLongName(symbol);
+        } else {
+            etfOptional = etfRepository.findBySymbol(symbol);
+        }
         if (etfOptional.isPresent()) {
             ETF etf = etfOptional.get();
             Map<String, Object> etfInfo = new HashMap<>();
@@ -116,10 +128,23 @@ public class ETFService {
     }
 
     public List<Map<String, String>> getAllPrice(String symbol) throws IOException {
-        Optional<ETF> etfOptional = etfRepository.findBySymbol(symbol);
+        logger.info("Fetching ETF info for symbol: {}", symbol);
+        try {
+            symbol = URLDecoder.decode(symbol, "UTF-8");
+            logger.info("decode ETF symbol: {}", symbol);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Error decoding symbol: {}", symbol, e);
+        }
+        Optional<ETF> etfOptional;
+        if (symbol.contains(" ")) {
+            etfOptional = etfRepository.findByLongName(symbol);
+        } else {
+            etfOptional = etfRepository.findBySymbol(symbol);
+        }
         
         if (etfOptional.isPresent()) {
             ETF etf = etfOptional.get();
+            symbol = etf.getSymbol();
             if (etf.getCountry() == CountryEnum.KOREA) {
                 return NaverFinanceUtils.getAllNaverPrice(symbol);
             } 

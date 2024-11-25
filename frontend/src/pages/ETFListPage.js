@@ -6,12 +6,15 @@ import ETFList from '../components/ETFList';
 import { getEtfList } from '../utils/getEtfList';
 import LogoutButton from '../components/LogoutButton';
 
+process.env.PORT = 3001;
+
 const ETFListPage = () => {
     const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
     const [priceRange, setPriceRange] = useState([0, 1000000]); // 가격 범위 상태
     const [countries, setCountries] = useState({ KOREA: true, USA: true }); // 국가 체크박스 상태
     const [etfData, setEtfData] = useState([]); // 전체 ETF 데이터
     const [filteredEtfData, setFilteredEtfData] = useState([]); // 1차 가공 리스트
+    const [searchKey, setSearchKey] = useState(0); // 페이지를 1로 초기화
 
     useEffect(() => {
         const fetchEtfData = async () => {
@@ -43,6 +46,7 @@ const ETFListPage = () => {
             return matchesSearchTerm && withinPriceRange && matchesCountry;
         });
         setFilteredEtfData(filteredData);
+        setSearchKey((prevKey) => prevKey + 1); // 페이지를 1로 초기화
     };
 
     return (
@@ -63,7 +67,7 @@ const ETFListPage = () => {
                     />
                 </Grid>
                 <Grid item xs={12} style={{ height: 'auto' }}>
-                    <ETFList filteredEtfData={filteredEtfData} />
+                    <ETFList key={searchKey} filteredEtfData={filteredEtfData} />
                 </Grid>
             </Grid>
         </div>

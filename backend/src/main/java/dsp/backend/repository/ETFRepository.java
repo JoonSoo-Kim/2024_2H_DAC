@@ -13,4 +13,5 @@ public interface ETFRepository extends JpaRepository<ETF, String> {
     boolean existsBySymbol(String symbol);
     
     List<ETF> findBySymbolIn(List<String> symbols);
+    Optional<ETF> findByLongName(String longName);
 }

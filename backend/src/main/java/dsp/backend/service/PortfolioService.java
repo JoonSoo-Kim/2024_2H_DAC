@@ -11,7 +11,10 @@ import dsp.backend.repository.ETFRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +30,19 @@ public class PortfolioService {
     private ETFRepository etfRepository;
 
     public void addPortfolio(String userId, String etfCode, Integer count) {
+        try {
+            etfCode = URLDecoder.decode(etfCode, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Optional<ETF> etfOptional;
+        if (etfCode.contains(" ")) {
+            etfOptional = etfRepository.findByLongName(etfCode);
+        } else {
+            etfOptional = etfRepository.findBySymbol(etfCode);
+            
+        }
+        etfCode = etfOptional.get().getSymbol();
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 정보"));
         etfRepository.findBySymbol(etfCode).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 정보"));
 

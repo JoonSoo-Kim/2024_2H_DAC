@@ -14,6 +14,10 @@ const ETFList = ({ filteredEtfData }) => {
     const [loading, setLoading] = useState(false); // 로딩 상태
     const navigate = useNavigate();
 
+    const formatAmount = (amount) => {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     useEffect(() => {
         const fetchEtfInfo = async () => {
             setLoading(true);
@@ -89,7 +93,9 @@ const ETFList = ({ filteredEtfData }) => {
                                         <div>
                                             <EtfContentTypography>
                                                 종가{' '}
-                                                {etf.Country === 'USA' ? Math.round(etf.etfPrice * 1395) : etf.etfPrice}{' '}
+                                                {etf.Country === 'USA'
+                                                    ? formatAmount(Math.round(etf.etfPrice * 1395))
+                                                    : formatAmount(etf.etfPrice)}{' '}
                                                 원
                                             </EtfContentTypography>
                                             <EtfContentTypography>운용사 {etf.fundmanager}</EtfContentTypography>

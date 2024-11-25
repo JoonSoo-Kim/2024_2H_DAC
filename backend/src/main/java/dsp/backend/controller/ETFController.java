@@ -4,6 +4,8 @@ import dsp.backend.service.ETFService;
 import dsp.backend.Entity.ETF;
 import dsp.backend.Entity.User;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/etf")
 public class ETFController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ETFService.class);
 
     @Autowired
     private ETFService etfService;
@@ -38,6 +42,7 @@ public class ETFController {
             }
             return ResponseEntity.ok(priceData);
         } catch (Exception e) {
+            logger.error("Error in getting price data for ETF: " + e);
             return ResponseEntity.status(404).body(null);
         }
     }

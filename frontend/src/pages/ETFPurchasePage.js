@@ -90,7 +90,7 @@ const ETFPurchasePage = () => {
         addPortfolio(recommendationCode, parseInt(secondQuantity) || 0);
         console.log(`Added ${firstQuantity} of ${etfCode} to portfolio`);
         console.log(`Added ${secondQuantity} of ${recommendationCode} to portfolio`);
-        navigate('/portfolio');
+        // navigate('/portfolio');
     };
 
     return (

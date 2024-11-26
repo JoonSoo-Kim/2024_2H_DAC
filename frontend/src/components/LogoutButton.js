@@ -10,9 +10,9 @@ const LogoutButton = () => {
         try {
             await logoutUser();
             if (window.location.pathname === '/') {
-                window.location.reload(); // 현재 위치가 '/'라면 새로고침
+                window.location.reload();
             } else {
-                navigate('/'); // 그렇지 않으면 '/'로 이동
+                window.location.reload();
             }
         } catch (error) {
             console.error('로그아웃 실패:', error);

@@ -18,6 +18,7 @@ const App = () => {
         <Router>
             <Routes>
                 <Route path="/" element={userId !== '' ? <MainPage /> : <FirstPage />} />
+                {userId !== '' && <Route path="*" element={<Navigate to="/" />} />} {/* Redirect all routes to home if logged in */}
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/etf" element={<ETFListPage />} />
@@ -25,7 +26,7 @@ const App = () => {
                 <Route path="/etf/purchase" element={<ETFPurchasePage />} />
                 <Route path="/survey" element={<SurveyPage />} />
                 <Route path="/tendency" element={<TendencyPage />} />
-                <Route path="*" element={<Navigate to="/" />} /> {/* Redirect unknown routes to home */}
+                {userId === '' && <Route path="*" element={<Navigate to="/" />} />} {/* Redirect unknown routes to home if not logged in */}
             </Routes>
         </Router>
     );
